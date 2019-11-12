@@ -19,7 +19,7 @@
             <input type="submit" value="Login">
             
         </form>
-        
+        <a href="/forgot">Forgot your password?</a>
             
     </body>
 </html>

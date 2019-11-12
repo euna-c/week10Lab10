@@ -17,7 +17,29 @@ import models.User;
  * @author awarsyle
  */
 public class AccountService {
-    
+    public boolean forgotPassword(String email, String path) throws Exception
+    {
+        //UserService us = new UserService();
+        //User user = us.get(email);
+        
+        UserDB userDB = new UserDB();
+        User user = userDB.getUser(email);
+        if(user == null){
+            return false;
+        }
+        String to = user.getEmail();
+        String subject = "Forgot password - forgot";
+        String template = path + "/emailtemplates/forgot.html";
+        HashMap<String, String> tags = new HashMap<>();
+        
+        tags.put("firstname", user.getFname());
+        tags.put("lastname", user.getLname());
+        tags.put("email", user.getEmail());
+        tags.put("password", user.getPassword());
+        
+        GmailService.sendMail(to, subject, template, tags);
+        return true;
+    }
     public User login(String email, String password, String path) throws Exception {
         UserDB userDB = new UserDB();
         User user = userDB.getUser(email);

@@ -1,20 +1,26 @@
 package dataaccess;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import models.User;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import models.Role;
 import utilities.DBUtil;
 
 public class UserDB {
+    //Check!!!!
+    public User getUserByEmail(String email) {
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            User user = em.createNamedQuery("User.findByEmail",User.class).
+                    setParameter("email", email).getSingleResult();
+
+            return user;
+        } finally {
+            em.close();
+        }
+    }
 
     public void insert(User user) throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
@@ -22,7 +28,7 @@ public class UserDB {
         try {
             Role role = user.getRole();
             role.getUserList().add(user);
-            
+
             trans.begin();
             em.persist(user);
             trans.commit();
@@ -56,7 +62,7 @@ public class UserDB {
             em.close();
         }
     }
-    
+
     public List<User> getAllActive() throws Exception {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
         try {
@@ -69,13 +75,13 @@ public class UserDB {
     }
 
     public User getUser(String email) throws Exception {
-         EntityManager em = DBUtil.getEmFactory().createEntityManager();
-         try {
-             User user = em.find(User.class, email);
-             return user;
-         } finally {
-             em.close();
-         }
+        EntityManager em = DBUtil.getEmFactory().createEntityManager();
+        try {
+            User user = em.find(User.class, email);
+            return user;
+        } finally {
+            em.close();
+        }
     }
 
     public void delete(User user) throws Exception {
@@ -84,7 +90,7 @@ public class UserDB {
         try {
             Role role = user.getRole();
             role.getUserList().remove(user);
-            
+
             trans.begin();
             em.remove(em.merge(user));
             trans.commit();
